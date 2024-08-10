@@ -57,7 +57,58 @@ class LinearEquationSystem:
         B = np.array([eq.y for eq in self.equations])
         return np.linalg.solve(A, B)
 
+
+def legendre_symbol(a, p):
+    """Calcula o Símbolo de Legendre (a/p)
+    """
+    ls = pow(a, (p - 1) // 2, p)
+    return -1 if ls == p - 1 else ls
+
+def tonelli_shank(n, p):
+    """Encontra uma raiz quadrada de n módulo p, se existir.
+    """
+    # Verifica se n é resíduo quadrático
+    if legendre_symbol(n, p) != 1:
+        return None
+    
+    # Encontra q e s tais que p - 1 = q * 2^s com q ímpar
+    s = 0
+    q = p - 1
+    while q % 2 == 0:
+        s += 1
+        q //= 2
+    
+    # Encontra um não-resíduo quadrático z
+    z = 2
+    while legendre_symbol(z, p) != -1:
+        z += 1
+    
+    # Inicializa variáveis
+    m = s
+    c = pow(z, q, p)
+    t = pow(n, q, p)
+    r = pow(n, (q + 1) // 2, p)
+    
+    while t != 1:
+        # Encontra o menor i tal que t^(2^i) = 1 (mod p)
+        i = 1
+        temp = (t * t) % p
+        while temp != 1:
+            temp = (temp * temp) % p
+            i += 1
+        
+        # Atualiza b, t, r
+        b = pow(c, 2**(m - i - 1), p)
+        m = i
+        c = (b * b) % p
+        t = (t * c) % p
+        r = (r * b) % p
+    
+    return r
+
+
 equation1 = LinearEquation(1, 1, 35)
 equation2 = LinearEquation(2, 4, 94)
 system = LinearEquationSystem([equation1, equation2])
 print(system.solve())
+print(tonelli_shank(13 ,179))

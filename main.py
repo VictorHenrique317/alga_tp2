@@ -395,7 +395,7 @@ if __name__ == "__main__":
     # Limit to first 2500 primes
     FIRST_PRIMES = FIRST_PRIMES[:2500]
 
-    # Read semiprime from imput
+    # Read semiprime from input
     sp = int(input())
 
     f1, f2, x, y = quadratic_sieve(sp)
